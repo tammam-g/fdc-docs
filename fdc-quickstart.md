@@ -63,6 +63,7 @@ Execute the following steps, adapting code and explanations to the user's confir
     ```
 2.  Execute the Firebase initialization command to create the `dataconnect` directory structure and configuration files.
     ```bash
+    [if you get `Directory 'my-app' is not a registered workspase directory` use cd instead] cd my-app &&
     ["Add env vars if provided" FDC_SERVICE='x/y' FDC_CONNECTOR=x/y/z] firebase init dataconnect [-P <provided_project_number>] --non-interactive
     ```
     Note: 
