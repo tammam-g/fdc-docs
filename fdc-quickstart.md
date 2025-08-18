@@ -31,7 +31,7 @@ You must get answers to the following questions before proceeding. Do not contin
 >
 > "I will now set up your Firebase Data Connect project. Please provide the following configuration:
 >
-> 1.  **Project Type:** Is this a **New Project** or for an **Existing Application**?
+> 1.  **Project Type:** Is this a **New Project** or for an **Existing Application**, if new what is it about?
 > 2.  **Client Platform:** Specify your client platform:
 >     *   **(W) Web:** Framework? **(R) React**, **(A) Angular**, or **(V) Vanilla JS**?
 >     *   **(K) Android (Kotlin)**
@@ -42,8 +42,7 @@ You must get answers to the following questions before proceeding. Do not contin
 >     *   **(P) Production Setup:** Connect to a live Cloud SQL instance (requires a Blaze plan). Please specify your GCP project number, the Data Connect service id"
 >           * `FDC_SERVICE` should have the format `<location>/<serviceId>`
 >           * `FDC_CONNECTOR` should have the same `<location>/<serviceId>/<connectorId>`
->4.   **Production Setup:**
->     *   If the user connected
+
 
 **2. Acknowledge and Confirm:**
 Confirm the user's choices. Example: "Configuration received: **New React Project** with **Local Development**. Proceeding with setup."
@@ -55,15 +54,16 @@ Confirm the user's choices. Example: "Configuration received: **New React Projec
 Execute the following steps, adapting code and explanations to the user's confirmed preferences. You should check if there is an existing `firebase.json` or schema files before proceeding and adapt the following steps based on the state of the project.
 
 #### **Step 1: Run CLI Setup**
+Replace `<app_name>` with something that fits based on the user responses.
 
 1.  If the user chose "New Project," execute the command to create a boilerplate application. For React:
     ```bash
-    npm create vite@latest my-app -- --template react-ts
-    cd my-app
+    npm create vite@latest <app_name> -- --template react-ts
+    cd <app_name> 
     ```
 2.  Execute the Firebase initialization command to create the `dataconnect` directory structure and configuration files.
     ```bash
-    [if you get `Directory 'my-app' is not a registered workspase directory` use cd instead] cd my-app &&
+    [if you get `Directory '<app_name>' is not a registered workspase directory` use cd instead] cd <app_name> &&
     ["Add env vars if provided" FDC_SERVICE='x/y' FDC_CONNECTOR=x/y/z] firebase init dataconnect [-P <provided_project_number>] --non-interactive
     ```
     Note: 
@@ -110,9 +110,9 @@ Execute the following steps, adapting code and explanations to the user's confir
       })
     }
     ```
-3.  **Execute the mutation** via a `curl` request to the local emulator's GraphQL endpoint.
+3.  **Execute the mutation** via a `curl` request to the local emulator's GraphQL endpoint. You can find the required vars in dataconnect/dataconnect.yaml.
     ```bash
-    curl -X POST -H "Content-Type: application/json" --data '{"query": "'"$(cat dataconnect/seed.gql)"'"}' http://127.0.0.1:9399/graphql
+    curl -d "{\"query\": $(cat dataconnect/seed.gql | jq --raw-input --slurp)}" -X POST -H 'Content-Type: application/json' 127.0.0.1:9399/v1/projects/demo-app/locations/us-central1/services/<service_id>:executeGraphql
     ```
 4.  Remove the temporary seed file.
     ```bash
